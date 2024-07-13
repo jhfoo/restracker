@@ -1,2 +1,3 @@
 ./venv/bin/supervisord -c conf/supervisord.conf
+sleep 2
 ./venv/bin/supervisorctl status 
