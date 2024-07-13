@@ -1,0 +1,4 @@
+echo "Stopping supervisord at `cat conf/supervisord.pid`"
+kill `cat conf/supervisord.pid`
+sleep 2
+ps auwwx | grep supervisord
