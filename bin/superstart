@@ -1,3 +1,8 @@
-./venv/bin/supervisord -c conf/supervisord.conf
+APP_PATH=$(realpath "$(dirname $0)/..")
+FILE_CONF="$APP_PATH/conf/supervisord.conf"
+
+echo "Config file = $FILE_CONF"
+cd $APP_PATH
+$APP_PATH/venv/bin/supervisord -c $FILE_CONF
 sleep 2
-./venv/bin/supervisorctl status 
+$APP_PATH/venv/bin/supervisorctl status 

@@ -1,1 +1,2 @@
-./venv/bin/python3 src/main.py $@
+APP_PATH=$(realpath "$(dirname $0)/..")
+$APP_PATH/venv/bin/python3 $APP_PATH/src/main.py $@

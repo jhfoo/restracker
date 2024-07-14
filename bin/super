@@ -1,1 +1,2 @@
-./venv/bin/supervisorctl $@
+APP_PATH=$(realpath "$(dirname $0)/..")
+$APP_PATH/venv/bin/supervisorctl $@

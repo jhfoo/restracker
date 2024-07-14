@@ -1,4 +1,10 @@
-echo "Stopping supervisord at `cat conf/supervisord.pid`"
-kill `cat conf/supervisord.pid`
+APP_PATH=$(realpath "$(dirname $0)/..")
+FILE_PID="$APP_PATH/conf/supervisord.pid"
+PID=`cat $FILE_PID`
+
+echo "APP_PATH = $APP_PATH"
+echo "FILE_PID = $FILE_PID"
+echo "Stopping supervisord on ProcessID $PID"
+kill $PID
 sleep 5
 ps auwwx | grep supervisord
