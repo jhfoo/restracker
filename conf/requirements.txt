@@ -1,2 +1,6 @@
 supervisor
 superfsmon
+fastapi
+uvicorn[standard]
+apscheduler
+pyyaml

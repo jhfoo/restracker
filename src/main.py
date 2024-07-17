@@ -1,45 +1,49 @@
 # core
 import argparse
+from contextlib import asynccontextmanager
 import json
 import logging
 import os
-import sched
-import subprocess
 import sys
 import time
 
-INTERVAL_RUN = 3
+# community
+import fastapi
 
-logger = None
+# custom
+import MyScheduler
+import util
+import glob
 
-def initLogger():
-  global logger
-  logger = logging.getLogger(__name__)
-  logging.basicConfig(stream=sys.stdout, 
-    format='%(asctime)s %(filename)s:%(levelname)s - %(message)s',
-    level=logging.DEBUG)
-  # hStream = logging.StreamHandler(sys.stdout)
-  # logger.addHandler(hStream)
+logger = logging.getLogger(__name__)
+util.initLogger(logger)
 
 def parseArgs():
   parser = argparse.ArgumentParser()
   args = parser.parse_args()
 
-def doCheck():
-  logger.info ('checking...')
-  resp = subprocess.run(['vnstat','--json'], capture_output=True)
-  try:
-    data = json.loads(resp.stdout.decode('utf-8'))
-    logger.debug(json.dumps(data, indent=2))
-  except Exception as e:
-    logger.error(e)
 
-  sch.enter(INTERVAL_RUN, 1, doCheck)
 
-initLogger()
+@asynccontextmanager
+async def lifespan(app: fastapi.FastAPI):
+  # service startup
+  logger.info('Starting scheduler')
+  MyScheduler.start()
+
+  logger.info('Starting service')
+  yield
+  # service shutdown
+  logger.info('Stopping service')
+
 logger.info (f'Current dir: {os.getcwd()}')
-parseArgs()
+# parseArgs()
 
-sch = sched.scheduler(time.time, time.sleep)
-sch.enter(INTERVAL_RUN, 1, doCheck)
-sch.run()
+with glob.MyValueLock:
+  glob.MyValue = 100
+app = fastapi.FastAPI(lifespan=lifespan)
+
+@app.get("/")
+def read_root():
+  with glob.MyValueLock:
+    glob.MyValue = time.time()
+  return {"Hello": glob.MyValue}

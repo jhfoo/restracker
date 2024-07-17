@@ -1,2 +1,3 @@
 APP_PATH=$(realpath "$(dirname $0)/..")
-$APP_PATH/venv/bin/python3 $APP_PATH/src/main.py $@
+cd $APP_PATH
+./venv/bin/fastapi dev src/main.py --host 0.0.0.0 $@
