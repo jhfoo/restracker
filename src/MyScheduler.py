@@ -37,14 +37,22 @@ def loadConfig():
       glob.hosts[host['name']] = {
         'addr': host['addr'],
         'name': host['name'],
+        'group': host['group'] if 'group' in host else 'default',
         'isUp': False
       }
+
+  if 'server' in AppConfig:
+    server = AppConfig['server']
+    logger.debug("Applying server overrides")
+    if 'PollIntervalSec' in server:
+      global INTERVAL_RUN
+      INTERVAL_RUN = server['PollIntervalSec']
+      logger.info (f"PollIntervalSec: {INTERVAL_RUN}")
 
 def ping(host):
   return subprocess.run(['ping', '-c', '1', host], stdout=subprocess.DEVNULL).returncode == 0
 
 def doCheck():
-  logger.info ('checking...')
   for HostId in glob.hosts:
     host = glob.hosts[HostId]
     try:
@@ -56,7 +64,7 @@ def doCheck():
       logger.warn (f"WARNING for {host['name']}: {err}")
 
   print (f"gMyValue: {glob.MyValue}")
-  time.sleep(10)
+
   # resp = subprocess.run(['vnstat','--json'], capture_output=True)
   # try:
   #   data = json.loads(resp.stdout.decode('utf-8'))
@@ -64,6 +72,7 @@ def doCheck():
   # except Exception as e:
   #   logger.error(e)
 
+  # logger.debug(f"INTERVAL_RUN: {INTERVAL_RUN}")
   sch.enter(INTERVAL_RUN, 1, doCheck)
 
 def start():

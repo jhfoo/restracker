@@ -3,5 +3,12 @@ hosts:
     addr: 192.168.146.18
   - name: gigantion
     addr: gigantion.node.consul
+    group: bkk
+  - name: freeman
+    addr: freeman.node.consul
+    group: bkk
   - name: nowhere
     addr: nowhere.node.consul
+    group: unknown
+server:
+  PollIntervalSec: 5
