@@ -3,3 +3,5 @@ hosts:
     addr: 192.168.146.18
   - name: gigantion
     addr: gigantion.node.consul
+  - name: nowhere
+    addr: nowhere.node.consul

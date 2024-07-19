@@ -32,14 +32,29 @@ def loadConfig():
     global AppConfig 
     AppConfig = yaml.load(stream, Loader=Loader)
 
+  with glob.HostLock:
+    for host in AppConfig['hosts']:
+      glob.hosts[host['name']] = {
+        'addr': host['addr'],
+        'name': host['name'],
+        'isUp': False
+      }
+
 def ping(host):
   return subprocess.run(['ping', '-c', '1', host], stdout=subprocess.DEVNULL).returncode == 0
 
 def doCheck():
   logger.info ('checking...')
-  for host in AppConfig['hosts']:
-    isHostAlive = ping (host['addr'])
-    print (f"Host {host['name']}: {isHostAlive}")
+  for HostId in glob.hosts:
+    host = glob.hosts[HostId]
+    try:
+      isHostAlive = ping (host['addr'])
+      if isHostAlive != host['isUp']:
+        logger.info (f"New state for {host['name']}: {isHostAlive}")
+        host['isUp'] = isHostAlive
+    except Exception as err:
+      logger.warn (f"WARNING for {host['name']}: {err}")
+
   print (f"gMyValue: {glob.MyValue}")
   time.sleep(10)
   # resp = subprocess.run(['vnstat','--json'], capture_output=True)

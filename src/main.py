@@ -5,15 +5,15 @@ import json
 import logging
 import os
 import sys
-import time
 
 # community
 import fastapi
 
 # custom
+import glob
 import MyScheduler
 import util
-import glob
+import api
 
 logger = logging.getLogger(__name__)
 util.initLogger(logger)
@@ -41,9 +41,5 @@ logger.info (f'Current dir: {os.getcwd()}')
 with glob.MyValueLock:
   glob.MyValue = 100
 app = fastapi.FastAPI(lifespan=lifespan)
+app.include_router(api.router, prefix='/api')
 
-@app.get("/")
-def read_root():
-  with glob.MyValueLock:
-    glob.MyValue = time.time()
-  return {"Hello": glob.MyValue}

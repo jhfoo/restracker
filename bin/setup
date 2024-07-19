@@ -1,3 +1,6 @@
+APP_PATH=$(realpath "$(dirname $0)/..")
+cd $APP_PATH
+
 if command -v freebsd-version > /dev/null; then
   echo [DETECTED OS] FreeBSD
   echo == Installing packages
